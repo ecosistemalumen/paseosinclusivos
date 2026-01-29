@@ -1,0 +1,54 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Lugar {
+  id                Int       @id @default(autoincrement())
+  nombre            String
+  slug              String    @unique
+  ubicacion         String
+  lat               Float?
+  lng               Float?
+  costo             String
+  nivel_esfuerzo    String
+  movilidad         String[]
+  tiene_rampa       Boolean
+  tiene_banio       Boolean
+  es_plano          Boolean
+  distancia_aprox   String?
+  ruido             String
+  tiene_sombra      Boolean
+  mejor_estacion    String[]
+  notas_honestas    String?
+  fuente            String
+  ultima_actualizacion DateTime @default(now())
+  estacion_actual   String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Declaracion {
+  id                Int       @id @default(autoincrement())
+  nombre_lugar      String
+  email_contacto    String
+  telefono          String?
+  ubicacion         String
+  costo             String
+  nivel_esfuerzo    String
+  movilidad         String    // SQLite no soporta arrays
+  tiene_rampa       Boolean
+  tiene_banio       Boolean
+  es_plano          Boolean
+  distancia_aprox   String?
+  ruido             String
+  tiene_sombra      Boolean
+  mejor_estacion    String    // SQLite no soporta arrays
+  notas_adicionales String?
+  estado            String    @default("pendiente")
+  createdAt         DateTime  @default(now())
+}
