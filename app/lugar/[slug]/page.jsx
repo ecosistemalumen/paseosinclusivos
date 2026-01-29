@@ -14,10 +14,11 @@ export default async function LugarPage({ params }) {
 
     if (lugar) {
         // Adapt SQLite CSV to Arrays for components
+        // Postgres returns arrays directly, no split needed
         lugar = {
             ...lugar,
-            movilidad: lugar.movilidad ? lugar.movilidad.split(',') : [],
-            mejor_estacion: lugar.mejor_estacion ? lugar.mejor_estacion.split(',') : []
+            movilidad: lugar.movilidad || [],
+            mejor_estacion: lugar.mejor_estacion || []
         };
     }
 
