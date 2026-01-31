@@ -18,7 +18,7 @@ async function getDeclaraciones() {
     return await prisma.declaracion.findMany({
         orderBy: { createdAt: 'desc' },
         include: {
-            autor: {
+            user: {
                 select: { full_name: true, email: true }
             }
         }
@@ -75,8 +75,8 @@ export default async function AdminDeclaraciones() {
                                             <User className="w-4 h-4 text-indigo-600" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-gray-900 leading-none">{dec.autor?.full_name || 'Usuario Anónimo'}</p>
-                                            <p className="text-[10px] text-gray-400">{dec.autor?.email}</p>
+                                            <p className="text-xs font-bold text-gray-900 leading-none">{dec.user?.full_name || 'Usuario Anónimo'}</p>
+                                            <p className="text-[10px] text-gray-400">{dec.user?.email}</p>
                                         </div>
                                     </div>
                                 </div>
