@@ -1,54 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model Profile {
+  id            String   @id @default(uuid()) // Links to Supabase Auth ID
+  email         String   @unique
+  full_name     String?
+  avatar_url    String?
+  role          String   @default("user") // "user", "admin"
+  
+  // Perfil Info
+  city          String?
+  mobility_type String?  // "silla", "baston", "visual", etc.
+  
+  // Preferences (Legacy/JSON backup)
+  preferences   String?
+
+  reviews       Review[]
+  activity      UserActivity[]
+  declaraciones Declaracion[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Lugar {
-  id                Int       @id @default(autoincrement())
-  nombre            String
-  slug              String    @unique
-  ubicacion         String
-  lat               Float?
-  lng               Float?
-  costo             String
-  nivel_esfuerzo    String
-  movilidad         String[]
-  tiene_rampa       Boolean
-  tiene_banio       Boolean
-  es_plano          Boolean
-  distancia_aprox   String?
-  ruido             String
-  tiene_sombra      Boolean
-  mejor_estacion    String[]
-  notas_honestas    String?
-  fuente            String
-  ultima_actualizacion DateTime @default(now())
-  estacion_actual   String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                   Int       @id @default(autoincrement())
+  nombre               String
+  slug                 String    @unique
+  ubicacion            String
+  lat                  Float?
+  lng                  Float?
+
+  // Costos
+  costo                String
+
+  // Accesibilidad
+  nivel_esfuerzo       String
+  movilidad            String[]
+  tiene_rampa          Boolean   @default(false)
+  tiene_banio          Boolean   @default(false)
+  es_plano             Boolean   @default(false)
+  distancia_aprox      String?
+
+  // Ambiente
+  ruido                String
+  tiene_sombra         Boolean   @default(false)
+  pet_friendly         Boolean   @default(false)
+
+  // Estacionalidad
+  mejor_estacion       String[]
+
+  // Notas honestas
+  notas_honestas       String?   @db.Text
+
+  // Imágenes (URL from Supabase Storage)
+  imagenes             String[]
+
+  // Categoría para exploración (Naturaleza, Cultura, etc.)
+  categoria            String?
+
+  // Metadata
+  fuente               String    // "Declarado" o "Comunitario"
+  // Estado de verificación
+  verificado           Boolean   @default(false)
+
+  ultima_actualizacion DateTime  @default(now())
+  estacion_actual      String
+
+  reviews              Review[]
+  userActivity         UserActivity[]
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([costo])
+  @@index([nivel_esfuerzo])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  text      String   @db.Text
+  rating    Int?     // 1-5 stars (optional)
+  
+  // Relations
+  userId    String
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lugarId   Int
+  lugar     Lugar    @relation(fields: [lugarId], references: [id], onDelete: Cascade)
+
+  // Context tags (e.g., "Visited in wheelchair")
+  context   String? 
+
+  createdAt DateTime @default(now())
+  
+  @@index([lugarId])
+  @@index([userId])
+}
+
+model UserActivity {
+  id        Int      @id @default(autoincrement())
+  
+  userId    String
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lugarId   Int
+  lugar     Lugar    @relation(fields: [lugarId], references: [id], onDelete: Cascade)
+
+  type      String   // "VISITED", "FAVORITE", "WISHLIST"
+  
+  timestamp DateTime @default(now())
+
+  @@unique([userId, lugarId, type]) // Prevent duplicate favorite/wishlist entries for same place
+  @@index([userId])
+  @@index([type])
 }
 
 model Declaracion {
-  id                Int       @id @default(autoincrement())
-  nombre_lugar      String
-  email_contacto    String
-  telefono          String?
-  ubicacion         String
-  costo             String
-  nivel_esfuerzo    String
-  movilidad         String    // SQLite no soporta arrays
-  tiene_rampa       Boolean
-  tiene_banio       Boolean
-  es_plano          Boolean
-  distancia_aprox   String?
-  ruido             String
-  tiene_sombra      Boolean
-  mejor_estacion    String    // SQLite no soporta arrays
-  notas_adicionales String?
-  estado            String    @default("pendiente")
-  createdAt         DateTime  @default(now())
+  id                   Int       @id @default(autoincrement())
+  nombre_lugar         String
+  email_contacto       String
+  telefono             String?
+  ubicacion            String
+
+  // Datos de accesibilidad
+  costo                String
+  nivel_esfuerzo       String
+  movilidad            String[]
+  tiene_rampa          Boolean   @default(false)
+  tiene_banio          Boolean   @default(false)
+  es_plano             Boolean   @default(false)
+  distancia_aprox      String?
+  ruido                String
+  tiene_sombra         Boolean   @default(false)
+  pet_friendly         Boolean   @default(false)
+  mejor_estacion       String[]
+  notas_adicionales    String?   @db.Text
+  imagenes             String[]
+  categoria            String?
+
+  // Estado
+  estado               String    @default("pendiente") // "pendiente", "aprobado", "rechazado"
+
+  // Link to user if logged in
+  userId               String?
+  user                 Profile?  @relation(fields: [userId], references: [id])
+
+  createdAt            DateTime  @default(now())
+
+  @@index([estado])
+  @@index([createdAt])
 }

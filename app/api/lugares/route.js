@@ -1,46 +1,79 @@
-import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/db';
 
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
 
-        // Parse filters
-        const costo = searchParams.get("costo");
-        const esfuerzos = searchParams.getAll("esfuerzo"); // Support multiple
-        const ruido = searchParams.get("ruido");
-        const sombra = searchParams.get("sombra") === "true";
-        const movilidades = searchParams.getAll("movilidad");
-        const estaciones = searchParams.getAll("estacion");
-
-        // Build query
+        // Construir filtros dinámicos
         const where = {};
 
-        if (costo) where.costo = costo;
-
-        if (esfuerzos.length > 0) {
-            where.nivel_esfuerzo = { in: esfuerzos };
+        // Categoria
+        const categoria = searchParams.get('categoria');
+        if (categoria) {
+            where.categoria = categoria;
         }
 
-        if (ruido) where.ruido = ruido;
-        if (sombra) where.tiene_sombra = true;
-
-        if (movilidades.length > 0) {
-            where.movilidad = { hasSome: movilidades };
+        // Costo
+        const costo = searchParams.get('costo');
+        if (costo) {
+            where.costo = { in: costo.split(',') };
         }
 
-        if (estaciones.length > 0) {
-            where.mejor_estacion = { hasSome: estaciones };
+        // Esfuerzo
+        const esfuerzo = searchParams.get('esfuerzo');
+        if (esfuerzo) {
+            where.nivel_esfuerzo = { in: esfuerzo.split(',') };
         }
 
+        // Movilidad (array contains)
+        const movilidad = searchParams.get('movilidad');
+        if (movilidad) {
+            where.movilidad = { hasSome: movilidad.split(',') };
+        }
+
+        // Ruido
+        const ruido = searchParams.get('ruido');
+        if (ruido) {
+            where.ruido = ruido;
+        }
+
+        // Sombra
+        const sombra = searchParams.get('sombra');
+        if (sombra === 'true') {
+            where.tiene_sombra = true;
+        }
+
+        // Estación
+        const estacion = searchParams.get('estacion');
+        if (estacion) {
+            where.mejor_estacion = { hasSome: estacion.split(',') };
+        }
+
+        // Pet Friendly
+        const petFriendly = searchParams.get('pet_friendly');
+        if (petFriendly === 'true') {
+            where.pet_friendly = true;
+        }
+
+        // Query a la base de datos
         const lugares = await prisma.lugar.findMany({
             where,
-            orderBy: { nombre: 'asc' }
+            orderBy: {
+                nombre: 'asc'
+            }
         });
 
-        return NextResponse.json({ total: lugares.length, lugares });
+        return NextResponse.json({
+            total: lugares.length,
+            lugares
+        });
+
     } catch (error) {
-        console.error("API Error:", error);
-        return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
+        console.error('Error fetching lugares:', error);
+        return NextResponse.json(
+            { error: 'Error al buscar lugares' },
+            { status: 500 }
+        );
     }
 }

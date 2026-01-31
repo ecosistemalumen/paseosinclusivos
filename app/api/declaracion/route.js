@@ -1,50 +1,64 @@
-import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
-import { z } from "zod";
-
-const schema = z.object({
-    nombre_lugar: z.string().min(1),
-    email_contacto: z.string().email(),
-    telefono: z.string().optional(),
-    ubicacion: z.string().min(1),
-    costo: z.string(),
-    nivel_esfuerzo: z.string(),
-    // Arrays/Booleans validation...
-});
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/db';
 
 export async function POST(request) {
     try {
-        const body = await request.json();
+        const data = await request.json();
 
-        // Basic validation (can expand with zod)
-        if (!body.nombre_lugar || !body.email_contacto) {
-            return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
+        // Validaciones básicas
+        if (!data.nombre_lugar || !data.ubicacion || !data.email_contacto) {
+            return NextResponse.json(
+                { error: 'Faltan campos requeridos' },
+                { status: 400 }
+            );
         }
 
+        // Validar email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email_contacto)) {
+            return NextResponse.json(
+                { error: 'Email inválido' },
+                { status: 400 }
+            );
+        }
+
+        // Guardar declaración
         const declaracion = await prisma.declaracion.create({
             data: {
-                nombre_lugar: body.nombre_lugar,
-                email_contacto: body.email_contacto,
-                telefono: body.telefono,
-                ubicacion: body.ubicacion,
-                costo: body.costo,
-                nivel_esfuerzo: body.nivel_esfuerzo,
-                movilidad: body.movilidad || [],
-                tiene_rampa: body.tiene_rampa || false,
-                tiene_banio: body.tiene_banio || false,
-                es_plano: body.es_plano || false,
-                distancia_aprox: body.distancia_aprox,
-                ruido: body.ruido,
-                tiene_sombra: body.tiene_sombra || false,
-                mejor_estacion: body.mejor_estacion || [],
-                notas_adicionales: body.notas_adicionales,
+                nombre_lugar: data.nombre_lugar,
+                email_contacto: data.email_contacto,
+                telefono: data.telefono || null,
+                ubicacion: data.ubicacion,
+                costo: data.costo,
+                nivel_esfuerzo: data.nivel_esfuerzo,
+                movilidad: data.movilidad,
+                tiene_rampa: data.tiene_rampa,
+                tiene_banio: data.tiene_banio,
+                es_plano: data.es_plano,
+                distancia_aprox: data.distancia_aprox || null,
+                ruido: data.ruido,
+                tiene_sombra: data.tiene_sombra,
+                pet_friendly: data.pet_friendly,
+                mejor_estacion: data.mejor_estacion,
+                notas_adicionales: data.notas_adicionales || null,
+                imagenes: data.imagenes || [],
                 estado: 'pendiente'
             }
         });
 
-        return NextResponse.json({ success: true, id: declaracion.id });
+        // TODO: Enviar email de confirmación (opcional)
+
+        return NextResponse.json({
+            success: true,
+            message: 'Declaración recibida',
+            id: declaracion.id
+        });
+
     } catch (error) {
-        console.error("API Error:", error);
-        return NextResponse.json({ error: "Error al procesar declaración" }, { status: 500 });
+        console.error('Error creating declaracion:', error);
+        return NextResponse.json(
+            { error: 'Error al guardar la declaración' },
+            { status: 500 }
+        );
     }
 }

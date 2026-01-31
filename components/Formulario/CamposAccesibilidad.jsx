@@ -1,115 +1,88 @@
-export default function CamposAccesibilidad({ values, onChange }) {
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        onChange(name, type === 'checkbox' ? checked : value);
-    };
-
-    const handleArrayChange = (name, value) => {
-        const current = values[name] || [];
-        const newValues = current.includes(value)
-            ? current.filter(v => v !== value)
-            : [...current, value];
-        onChange(name, newValues);
-    };
-
+export default function CamposAccesibilidad({ formData, handleChange }) {
     return (
-        <div className="space-y-8">
-            <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Costos y Esfuerzo</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Costo</label>
-                        <select
-                            name="costo"
-                            value={values.costo}
-                            onChange={handleChange}
-                            className="w-full border-gray-300 rounded-lg shadow-sm p-3 border"
-                        >
-                            <option value="">Seleccionar...</option>
-                            <option value="Gratis">Gratis</option>
-                            <option value="Gratis con CUD">Gratis con CUD</option>
-                            <option value="Pago">Pago</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de esfuerzo</label>
-                        <select
-                            name="nivel_esfuerzo"
-                            value={values.nivel_esfuerzo}
-                            onChange={handleChange}
-                            className="w-full border-gray-300 rounded-lg shadow-sm p-3 border"
-                        >
-                            <option value="">Seleccionar...</option>
-                            <option value="Bajo">Bajo</option>
-                            <option value="Medio">Medio</option>
-                            <option value="Alto">Alto</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+        <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Accesibilidad
+            </h2>
 
-            <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Accesibilidad Física</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
+            <div className="space-y-6">
+
+                {/* Checkboxes de accesibilidad */}
+                <div className="space-y-4">
+
+                    <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                             type="checkbox"
                             name="tiene_rampa"
-                            checked={values.tiene_rampa}
+                            checked={formData.tiene_rampa}
                             onChange={handleChange}
-                            className="w-5 h-5 text-primary rounded"
+                            className="w-5 h-5 mt-1 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-300"
                         />
-                        <span className="font-medium text-gray-700">Tiene rampas</span>
+                        <div>
+                            <span className="text-lg text-gray-900 font-medium group-hover:text-blue-600 block">
+                                ¿Tiene rampas?
+                            </span>
+                            <span className="text-sm text-gray-600">
+                                Para sillas de ruedas o personas con movilidad reducida
+                            </span>
+                        </div>
                     </label>
-                    <label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
+
+                    <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                             type="checkbox"
                             name="tiene_banio"
-                            checked={values.tiene_banio}
+                            checked={formData.tiene_banio}
                             onChange={handleChange}
-                            className="w-5 h-5 text-primary rounded"
+                            className="w-5 h-5 mt-1 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-300"
                         />
-                        <span className="font-medium text-gray-700">Tiene baños accesibles</span>
+                        <div>
+                            <span className="text-lg text-gray-900 font-medium group-hover:text-blue-600 block">
+                                ¿Tiene baños accesibles?
+                            </span>
+                            <span className="text-sm text-gray-600">
+                                Con espacio suficiente y barras de apoyo
+                            </span>
+                        </div>
                     </label>
-                    <label className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
+
+                    <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                             type="checkbox"
                             name="es_plano"
-                            checked={values.es_plano}
+                            checked={formData.es_plano}
                             onChange={handleChange}
-                            className="w-5 h-5 text-primary rounded"
+                            className="w-5 h-5 mt-1 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-300"
                         />
-                        <span className="font-medium text-gray-700">Es plano (sin escalones)</span>
+                        <div>
+                            <span className="text-lg text-gray-900 font-medium group-hover:text-blue-600 block">
+                                ¿Es plano? (sin escalones)
+                            </span>
+                            <span className="text-sm text-gray-600">
+                                Todo el recorrido es accesible sin subir/bajar escaleras
+                            </span>
+                        </div>
                     </label>
-                    <div>
-                        <input
-                            type="text"
-                            name="distancia_aprox"
-                            value={values.distancia_aprox}
-                            onChange={handleChange}
-                            placeholder="Distancia desde estacionamiento (ej: 50m)"
-                            className="w-full border-gray-300 rounded-lg shadow-sm p-3 border"
-                        />
-                    </div>
-                </div>
-            </div>
 
-            <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Movilidad Compatible</h3>
-                <div className="flex flex-wrap gap-4">
-                    {["Silla de ruedas", "Andador", "Bastón"].map((mov) => (
-                        <label key={mov} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={(values.movilidad || []).includes(mov)}
-                                onChange={() => handleArrayChange("movilidad", mov)}
-                                className="w-4 h-4 text-primary rounded"
-                            />
-                            <span className="text-gray-700">{mov}</span>
-                        </label>
-                    ))}
                 </div>
+
+                {/* Distancia aproximada */}
+                <div>
+                    <label htmlFor="distancia_aprox" className="block text-base font-semibold text-gray-900 mb-2">
+                        Distancia aproximada desde estacionamiento <span className="text-gray-500">(opcional)</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="distancia_aprox"
+                        name="distancia_aprox"
+                        value={formData.distancia_aprox}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-300 transition-colors"
+                        placeholder="Ej: 150m, 500m, etc."
+                    />
+                </div>
+
             </div>
-        </div>
+        </section>
     );
 }
