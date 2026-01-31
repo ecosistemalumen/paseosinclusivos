@@ -1,7 +1,8 @@
-
 import prisma from '@/lib/db'
 import { NextResponse } from 'next/server'
 import { verifyAdmin } from '@/lib/supabase/server'
+
+export const dynamic = 'force-dynamic'
 
 // Helper for slugify
 const createSlug = (text) => {

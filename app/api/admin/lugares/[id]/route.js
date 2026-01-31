@@ -2,6 +2,8 @@ import prisma from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/supabase/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(request, { params }) {
     const { id } = params;
     const { error, status } = await verifyAdmin();
