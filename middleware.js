@@ -7,6 +7,10 @@ export async function middleware(request) {
             headers: request.headers,
         },
     })
+    // Environment check to prevent build failures if env vars are missing
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        return NextResponse.next();
+    }
 
     // Refresh Session logic
     const supabase = createServerClient(
