@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import CamposAccesibilidad from './CamposAccesibilidad';
 import ImageUploader from '../UI/ImageUploader';
-import { createClient } from '@/lib/supabase/client';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 
 const STEPS = [
@@ -89,7 +89,7 @@ export default function FormDeclaracion({ setEnviado }) {
         setError(null);
 
         try {
-            const supabase = createClient();
+            const supabase = getSupabaseClient();
             const imageUrls = [];
 
             // 1. Upload Images
