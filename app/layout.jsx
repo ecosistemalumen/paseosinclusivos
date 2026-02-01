@@ -4,6 +4,8 @@ import Footer from '@/components/Layout/Footer';
 import AccessibilityWidget from '@/components/UI/AccessibilityWidget';
 import { Toaster } from 'sonner';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: 'Paseos Inclusivos | Experiencias reales',
     description: 'Información y experiencias reales para decidir salir con más certeza. Plataforma comunitaria de accesibilidad.',
