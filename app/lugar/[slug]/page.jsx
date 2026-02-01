@@ -1,16 +1,10 @@
-
 import { notFound } from 'next/navigation';
-// Retain 'dynamic' export configuration
-export const dynamic = 'force-dynamic';
-
 import Link from 'next/link';
 import Badge from '@/components/Ficha/Badge';
 import NotasHonestas from '@/components/Ficha/NotasHonestas';
 import InteractionButtons from '@/components/Ficha/InteractionButtons';
 import nextDynamic from 'next/dynamic';
 import { calculateSemaphore } from '@/lib/decision';
-import { createClient } from '@/lib/supabase/server';
-import prisma from '@/lib/db';
 import {
     MapPin,
     ChevronLeft,
@@ -35,6 +29,8 @@ const MapaInteractivo = nextDynamic(() => import('@/components/Mapa/MapaInteract
 });
 
 // Fetch del lugar específico
+
+// Fetch del lugar específico
 async function getLugar(slug) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/lugar/${slug}`, {
@@ -52,16 +48,10 @@ async function getLugar(slug) {
     }
 }
 
-async function getUserProfile() {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-    return await prisma.profile.findUnique({ where: { email: user.email } });
-}
-
 export default async function LugarPage({ params }) {
     const lugar = await getLugar(params.slug);
-    const userProfile = await getUserProfile();
+    // User profile is not fetched on server for static pages
+    const userProfile = null;
 
     if (!lugar) {
         notFound();

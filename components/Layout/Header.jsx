@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { User, LogIn, Menu, X, ChevronDown, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,7 +13,8 @@ export default function Header() {
     const [role, setRole] = useState(null);
     const [profileOpen, setProfileOpen] = useState(false);
 
-    const supabase = createClient();
+    // Initialized inside effect/handler to avoid SSR issues
+    const supabase = getSupabaseClient();
 
     useEffect(() => {
         const getUser = async () => {

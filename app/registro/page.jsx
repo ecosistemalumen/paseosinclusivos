@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { Mail, Lock, User, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -14,11 +15,11 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const supabase = createClient();
-
     const handleRegister = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const supabase = getSupabaseClient();
 
         try {
             // 1. Sign up user in Supabase Auth

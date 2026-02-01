@@ -2,7 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function UserDashboard() {
@@ -10,9 +10,9 @@ export default function UserDashboard() {
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState(null)
     const router = useRouter()
-    const supabase = createClient()
 
     useEffect(() => {
+        const supabase = getSupabaseClient()
         supabase.auth.getUser().then(({ data: { user } }) => {
             if (!user) router.push('/login')
             setUser(user)

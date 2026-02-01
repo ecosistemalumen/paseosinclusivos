@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { Mail, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -11,11 +12,11 @@ export default function RecoverPage() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const supabase = createClient();
-
     const handleRecover = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const supabase = getSupabaseClient();
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {

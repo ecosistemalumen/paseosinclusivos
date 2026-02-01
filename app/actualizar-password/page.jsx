@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState, useEffect } from 'react';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -14,10 +15,10 @@ export default function UpdatePasswordPage() {
     const [success, setSuccess] = useState(false);
     const router = useRouter();
 
-    const supabase = createClient();
-
     const handleUpdate = async (e) => {
         e.preventDefault();
+
+        const supabase = getSupabaseClient();
 
         if (password !== confirmPassword) {
             toast.error('Las contraseñas no coinciden.');

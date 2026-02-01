@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
@@ -8,7 +8,7 @@ export async function GET(request) {
     const next = searchParams.get('next') ?? '/inicio'
 
     if (code) {
-        const supabase = createClient()
+        const supabase = getSupabaseServer()
         const { error, data } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!error && data?.user) {

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { Mail, Lock, ArrowRight, Loader2, KeyRound, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -14,11 +15,11 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const supabase = createClient();
-
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const supabase = getSupabaseClient();
 
         try {
             const { error } = await supabase.auth.signInWithPassword({
