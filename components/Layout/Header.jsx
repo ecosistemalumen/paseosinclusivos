@@ -14,9 +14,10 @@ export default function Header() {
     const [profileOpen, setProfileOpen] = useState(false);
 
     // Initialized inside effect/handler to avoid SSR issues
-    const supabase = getSupabaseClient();
+    // const supabase = getSupabaseClient(); REMOVED
 
     useEffect(() => {
+        const supabase = getSupabaseClient();
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
@@ -50,6 +51,7 @@ export default function Header() {
     }, []);
 
     const handleLogout = async () => {
+        const supabase = getSupabaseClient();
         await supabase.auth.signOut();
         setProfileOpen(false);
         window.location.href = '/login'; // Force a full reload to clean all states
