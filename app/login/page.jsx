@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useState } from 'react';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { Mail, Lock, ArrowRight, Loader2, KeyRound, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';

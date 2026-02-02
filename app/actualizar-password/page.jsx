@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { Lock, ArrowRight, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
