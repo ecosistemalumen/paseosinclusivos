@@ -63,7 +63,10 @@ export async function middleware(request) {
         url.pathname.startsWith('/api') ||
         url.pathname === '/prensa' ||
         url.pathname === '/privacidad' ||
-        url.pathname === '/accesibilidad'
+        url.pathname === '/accesibilidad' ||
+        url.pathname === '/registro' ||
+        url.pathname === '/recuperar' ||
+        url.pathname === '/actualizar-password'
 
     // Admin Protection
     if (url.pathname.startsWith('/admin')) {
